@@ -208,7 +208,7 @@ async function createWindow(): Promise<void> {
 
   const windowSettings: Electron.BrowserWindowConstructorOptions = {
     width: 800,
-    height: 600,
+    height: 800,
     minWidth: 750,
     minHeight: 550,
     x: state.currentX,

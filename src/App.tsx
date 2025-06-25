@@ -15,6 +15,7 @@ import {
 import { ToastContext } from "./contexts/toast"
 import { WelcomeScreen } from "./components/WelcomeScreen"
 import { SettingsDialog } from "./components/Settings/SettingsDialog"
+import { LoginDialog } from "./components/Login/Login"
 
 // Create a React Query client
 const queryClient = new QueryClient({
@@ -47,6 +48,7 @@ function App() {
   // Note: Model selection is now handled via separate extraction/solution/debugging model settings
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isLoginOpen, setIsLoginOpen] = useState(false)
 
   // Set unlimited credits
   const updateCredits = useCallback(() => {
@@ -91,9 +93,14 @@ function App() {
         setHasApiKey(hasKey)
         
         // If no API key is found, show the settings dialog after a short delay
+        // if (!hasKey) {
+        //   setTimeout(() => {
+        //     setIsSettingsOpen(true)
+        //   }, 1000)
+        // }
         if (!hasKey) {
           setTimeout(() => {
-            setIsSettingsOpen(true)
+            setIsLoginOpen(true)
           }, 1000)
         }
       } catch (error) {
@@ -138,8 +145,8 @@ function App() {
   // Listen for settings dialog open requests
   useEffect(() => {
     const unsubscribeSettings = window.electronAPI.onShowSettings(() => {
-      console.log("Show settings dialog requested");
-      setIsSettingsOpen(true);
+      console.log("Show Login dialog requested");
+      setIsLoginOpen(true);
     });
     
     return () => {
@@ -220,6 +227,16 @@ function App() {
     setIsSettingsOpen(open);
   }, []);
 
+    const handleOpenLogin = useCallback(() => {
+    console.log('Opening settings dialog');
+    setIsLoginOpen(true);
+  }, []);
+
+  const handleCloseLogin = useCallback((open: boolean) => {
+    console.log('Settings dialog state changed:', open);
+    setIsLoginOpen(open);
+  }, []);
+
   const handleApiKeySave = useCallback(async (apiKey: string) => {
     try {
       await window.electronAPI.updateConfig({ apiKey })
@@ -249,7 +266,7 @@ function App() {
                   setLanguage={updateLanguage}
                 />
               ) : (
-                <WelcomeScreen onOpenSettings={handleOpenSettings} />
+                <WelcomeScreen onOpenLogin={handleOpenLogin} onOpenSettings={handleOpenSettings} />
               )
             ) : (
               <div className="min-h-screen bg-black flex items-center justify-center">
@@ -265,6 +282,11 @@ function App() {
           </div>
           
           {/* Settings Dialog */}
+          <LoginDialog 
+            open={isLoginOpen} 
+            onOpenChange={handleCloseLogin} 
+          />
+
           <SettingsDialog 
             open={isSettingsOpen} 
             onOpenChange={handleCloseSettings} 

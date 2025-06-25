@@ -314,7 +314,7 @@ export function SettingsDialog({ open: externalOpen, onOpenChange }: SettingsDia
         }}
       >        
         <DialogHeader>
-          <DialogTitle>API Settings</DialogTitle>
+          <DialogTitle>Settings</DialogTitle>
           <DialogDescription className="text-white/70">
             Configure your API key and model preferences. You'll need your own API key to use this application.
           </DialogDescription>
